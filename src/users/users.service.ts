@@ -1,68 +1,87 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './interfaces';
-import { Role } from './types';
-import { CreateUserDto } from './dto/create-user';
-import { UpdateUserDto } from './dto/update-user';
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
-  users: User[] = [
+  private users = [
     {
-      id: '1',
-      name: 'John Doe',
-      email: 'test1@gmail.com',
-      role: 'ADMIN',
+      id: 1,
+      name: 'Leanne Graham',
+      email: 'Sincere@april.biz',
+      role: 'INTERN',
     },
     {
-      id: '2',
-      name: 'Jane Doe',
-      email: 'test2@gmail.com',
+      id: 2,
+      name: 'Ervin Howell',
+      email: 'Shanna@melissa.tv',
+      role: 'INTERN',
+    },
+    {
+      id: 3,
+      name: 'Clementine Bauch',
+      email: 'Nathan@yesenia.net',
       role: 'ENGINEER',
     },
     {
-      id: '3',
-      name: 'Alice',
-      email: 'test3@gmail.com',
-      role: 'INTERN',
+      id: 4,
+      name: 'Patricia Lebsack',
+      email: 'Julianne.OConner@kory.org',
+      role: 'ENGINEER',
+    },
+    {
+      id: 5,
+      name: 'Chelsey Dietrich',
+      email: 'Lucio_Hettinger@annie.ca',
+      role: 'ADMIN',
     },
   ];
 
-  findAll(role?: Role): User[] {
+  findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
     if (role) {
-      const foundUsers = this.users.filter((user) => user.role === role);
-      if (!foundUsers.length)
-        throw new NotFoundException('role is not valid');
-      return this.users.filter((user) => user.role === role);
+      const rolesArray = this.users.filter((user) => user.role === role);
+      if (rolesArray.length === 0)
+        throw new NotFoundException('User Role Not Found');
+      return rolesArray;
     }
     return this.users;
   }
 
-  findOne(id: string) {
+  findOne(id: number) {
     const user = this.users.find((user) => user.id === id);
-    if (!user) throw new NotFoundException('User not found');
+
+    if (!user) throw new NotFoundException('User Not Found');
+
     return user;
   }
 
   create(createUserDto: CreateUserDto) {
-    if (!createUserDto.email || !createUserDto.name) return 'Missing fields.';
-    const createdUser = { id: String(Date.now()), ...createUserDto };
-    this.users.push(createdUser);
-    return createdUser;
+    const usersByHighestId = [...this.users].sort((a, b) => b.id - a.id);
+    const newUser = {
+      id: usersByHighestId[0].id + 1,
+      ...createUserDto,
+    };
+    this.users.push(newUser);
+    return newUser;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     this.users = this.users.map((user) => {
       if (user.id === id) {
         return { ...user, ...updateUserDto };
       }
       return user;
     });
+
     return this.findOne(id);
   }
 
-  delete(id: string) {
-    const removedUser = this.users.find((user) => user.id === id);
+  delete(id: number) {
+    const removedUser = this.findOne(id);
+
     this.users = this.users.filter((user) => user.id !== id);
+
     return removedUser;
   }
 }
