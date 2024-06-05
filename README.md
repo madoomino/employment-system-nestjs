@@ -26,6 +26,12 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Tech Stack
+- Nestjs
+- Prisma
+- Postgres
+- Typescript
+
 ## Installation
 
 ```bash
@@ -45,18 +51,8 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
+## Env file
+you should have an env file in the root dir, with pgsql database `DATABASE_URL`
 
 ## Support
 
